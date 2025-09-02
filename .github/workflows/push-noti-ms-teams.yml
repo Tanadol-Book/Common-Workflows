@@ -57,7 +57,7 @@ jobs:
                      }
                   ],
                   "actions": [
-                    { "type": "Action.OpenUrl", "title": "📂 View Compare", "url": "${{ inputs.compare_url || format('https://github.com/{0}/compare', github.repository) }}" }
+                    { "type": "Action.OpenUrl", "title": "📂 View Compare", "url": "${{ github.event.compare }}" }
                   ]
                 }
               }
