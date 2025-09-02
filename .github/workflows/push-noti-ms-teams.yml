@@ -52,10 +52,18 @@ jobs:
                     { "type": "FactSet",
                        "facts": [
                          { "title": "Pusher:", "value": "${{ github.actor }}" },
-                         { "title": "Repository:", "value": "${{ github.repository }}" },
-                         { "title": "Ref:", "value": "**${{ github.ref }}**" }
+                         { "title": "Repository:", "value": "${{ github.repository }}" }
                        ]
-                     }
+                     },
+                    { "type": "Container",
+                      "items": [
+                        { "type": "TextBlock", "text": "• ${{ steps.commit_1_msg.outputs.value }}  \n${{ steps.commit_1_sha.outputs.value }}", "wrap": true, "isVisible": ${{ steps.commit_1_sha.outputs.value != '' }} },
+                        { "type": "TextBlock", "text": "• ${{ steps.commit_2_msg.outputs.value }}  \n${{ steps.commit_2_sha.outputs.value }}", "wrap": true, "isVisible": ${{ steps.commit_2_sha.outputs.value != '' }} },
+                        { "type": "TextBlock", "text": "• ${{ steps.commit_3_msg.outputs.value }}  \n${{ steps.commit_3_sha.outputs.value }}", "wrap": true, "isVisible": ${{ steps.commit_3_sha.outputs.value != '' }} },
+                        { "type": "TextBlock", "text": "...", "wrap": false, "isSubtle": true, "spacing": "Small", "isVisible": ${{ gt(steps.commit_count.outputs.value, 3) }} }
+
+                      ]
+                    },
                   ],
                   "actions": [
                     { "type": "Action.OpenUrl", "title": "📂 View Compare", "url": "${{ inputs.compare_url || format('https://github.com/{0}/compare', github.repository) }}" }
