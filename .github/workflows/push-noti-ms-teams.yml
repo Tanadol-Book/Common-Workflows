@@ -29,6 +29,7 @@ jobs:
   send:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Get last 3 commit messages
         id: commits
         run: |
@@ -75,9 +76,9 @@ jobs:
                     },
                     { "type": "Container",
                       "items": [
-                        { "type": "TextBlock", "text": "• ${{ steps.commit_1_msg.outputs.value }}  \n${{ steps.commit_1_sha.outputs.value }}", "wrap": true, "isVisible": ${{ steps.commit_1_sha.outputs.value != '' }} },
-                        { "type": "TextBlock", "text": "• ${{ steps.commit_2_msg.outputs.value }}  \n${{ steps.commit_2_sha.outputs.value }}", "wrap": true, "isVisible": ${{ steps.commit_2_sha.outputs.value != '' }} },
-                        { "type": "TextBlock", "text": "• ${{ steps.commit_3_msg.outputs.value }}  \n${{ steps.commit_3_sha.outputs.value }}", "wrap": true, "isVisible": ${{ steps.commit_3_sha.outputs.value != '' }} }
+                        { "type": "TextBlock", "text": "• ${{ steps.commits.outputs.commit_1_msg }}", "wrap": true, "isVisible": ${{ steps.commits.outputs.commit_1_msg != '' }} },
+                        { "type": "TextBlock", "text": "• ${{ steps.commits.outputs.commit_2_msg }}", "wrap": true, "isVisible": ${{ steps.commits.outputs.commit_2_msg != '' }} },
+                        { "type": "TextBlock", "text": "• ${{ steps.commits.outputs.commit_3_msg }}", "wrap": true, "isVisible": ${{ steps.commits.outputs.commit_3_msg != '' }} }
                       ]
                     },
                   ],
