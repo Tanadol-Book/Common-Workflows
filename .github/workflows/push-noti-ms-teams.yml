@@ -34,34 +34,34 @@ jobs:
         shell: bash
         run: |
           cat > card.json << 'JSON'
-            {
-              "type": "message",
-              "attachments": [
-                {
-                  "contentType": "application/vnd.microsoft.card.adaptive",
-                  "content": {
-                    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-                    "type": "AdaptiveCard",
-                    "version": "1.5",
-                    "body": [
-                      { "type": "Container", "style": "good", "bleed": true,
-                        "items": [
-                          { "type": "TextBlock", "text": "⬆️ New Push to **${{ github.ref_name }}**", "weight": "Bolder", "size": "Large", "wrap": true },
-                          { "type": "TextBlock", "text": "Repository: **${{ github.repository }}**", "isSubtle": true, "wrap": true }
-                        ]
-                      }
-                    ],
-                    "actions": [
-                      { "type": "Action.OpenUrl", "title": "📂 View Compare", "url": "${{ inputs.compare_url || format('https://github.com/{0}/compare', github.repository) }}" }
-                    ]
-                  }
+          {
+            "type": "message",
+            "attachments": [
+              {
+                "contentType": "application/vnd.microsoft.card.adaptive",
+                "content": {
+                  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                  "type": "AdaptiveCard",
+                  "version": "1.5",
+                  "body": [
+                    { "type": "Container", "style": "good", "bleed": true,
+                      "items": [
+                        { "type": "TextBlock", "text": "⬆️ New Push to **${{ github.ref_name }}**", "weight": "Bolder", "size": "Large", "wrap": true },
+                        { "type": "TextBlock", "text": "Repository: **${{ github.repository }}**", "isSubtle": true, "wrap": true }
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    { "type": "Action.OpenUrl", "title": "📂 View Compare", "url": "${{ inputs.compare_url || format('https://github.com/{0}/compare', github.repository) }}" }
+                  ]
                 }
-              ]
-            }
+              }
+            ]
+          }
             JSON
             
       - name: Build Adaptive Card JSON (push)
-        id: ${{ inputs.cardType != 'push' }}
+        if: ${{ inputs.cardType != 'push' }}
         shell: bash
         run: |
           cat > card.json << 'JSON'
