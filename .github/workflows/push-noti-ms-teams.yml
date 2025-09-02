@@ -37,7 +37,9 @@ jobs:
           COMMITS=$(git log -3 --pretty=format:"%h|||%s")
           i=1
           for COMMIT in $COMMITS; do
+            SHA=$(echo "$COMMIT" | cut -d '|' -f 1)
             MSG=$(echo "$COMMIT" | cut -d '|' -f 3)
+            echo "commit_${i}_sha=$SHA" >> $GITHUB_OUTPUT
             echo "commit_${i}_msg=$MSG" >> $GITHUB_OUTPUT
             i=$((i+1))
           done
@@ -76,9 +78,9 @@ jobs:
                     },
                     { "type": "Container",
                       "items": [
-                        { "type": "TextBlock", "text": "• ${{ steps.commits.outputs.commit_1_msg }}", "wrap": true, "isVisible": ${{ steps.commits.outputs.commit_1_msg != '' }} },
-                        { "type": "TextBlock", "text": "• ${{ steps.commits.outputs.commit_2_msg }}", "wrap": true, "isVisible": ${{ steps.commits.outputs.commit_2_msg != '' }} },
-                        { "type": "TextBlock", "text": "• ${{ steps.commits.outputs.commit_3_msg }}", "wrap": true, "isVisible": ${{ steps.commits.outputs.commit_3_msg != '' }} }
+                        { "type": "TextBlock", "text": "• ${{ steps.commits.outputs.commit_1_msg }} \n${{ steps.commits.outputs.commit_1_sha }}", "wrap": true, "isVisible": ${{ steps.commits.outputs.commit_1_sha != '' }} },
+                        { "type": "TextBlock", "text": "• ${{ steps.commits.outputs.commit_2_msg }} \n${{ steps.commits.outputs.commit_2_sha }}", "wrap": true, "isVisible": ${{ steps.commits.outputs.commit_2_sha != '' }} },
+                        { "type": "TextBlock", "text": "• ${{ steps.commits.outputs.commit_3_msg }} \n${{ steps.commits.outputs.commit_3_sha }}", "wrap": true, "isVisible": ${{ steps.commits.outputs.commit_3_sha != '' }} }
                       ]
                     },
                   ],
