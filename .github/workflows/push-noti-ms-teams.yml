@@ -29,6 +29,18 @@ jobs:
   send:
     runs-on: ubuntu-latest
     steps:
+      - name: Get last 3 commit messages
+        id: commits
+        run: |
+          git fetch --depth=5
+          COMMITS=$(git log -3 --pretty=format:"%h|||%s")
+          i=1
+          for COMMIT in $COMMITS; do
+            MSG=$(echo "$COMMIT" | cut -d '|' -f 3)
+            echo "commit_${i}_msg=$MSG" >> $GITHUB_OUTPUT
+            i=$((i+1))
+          done
+
       - name: Build Adaptive Card JSON (push)
         if: ${{ inputs.cardType == 'push' }}
         shell: bash
@@ -63,9 +75,9 @@ jobs:
                     },
                     { "type": "Container",
                       "items": [
-                        { "type": "TextBlock", "text": "• ${{ steps.commit_1_msg.outputs.value }}", "wrap": true, "isVisible": ${{ steps.commit_1_sha.outputs.value != '' }} },
-                        { "type": "TextBlock", "text": "• ${{ steps.commit_2_msg.outputs.value }}", "wrap": true, "isVisible": ${{ steps.commit_2_sha.outputs.value != '' }} },
-                        { "type": "TextBlock", "text": "• ${{ steps.commit_3_msg.outputs.value }}", "wrap": true, "isVisible": ${{ steps.commit_3_sha.outputs.value != '' }} }
+                        { "type": "TextBlock", "text": "• ${{ steps.commit_1_msg.outputs.value }}  \n${{ steps.commit_1_sha.outputs.value }}", "wrap": true, "isVisible": ${{ steps.commit_1_sha.outputs.value != '' }} },
+                        { "type": "TextBlock", "text": "• ${{ steps.commit_2_msg.outputs.value }}  \n${{ steps.commit_2_sha.outputs.value }}", "wrap": true, "isVisible": ${{ steps.commit_2_sha.outputs.value != '' }} },
+                        { "type": "TextBlock", "text": "• ${{ steps.commit_3_msg.outputs.value }}  \n${{ steps.commit_3_sha.outputs.value }}", "wrap": true, "isVisible": ${{ steps.commit_3_sha.outputs.value != '' }} }
                       ]
                     },
                   ],
