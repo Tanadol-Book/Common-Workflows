@@ -6,21 +6,6 @@ on:
         description: "push | pr"
         required: true
         type: string
-      pr_number:
-        required: false
-        type: string
-      pr_title:
-        required: false
-        type: string
-      pr_head:
-        required: false
-        type: string
-      pr_base:
-        required: false
-        type: string
-      compare_url:
-        required: false
-        type: string
     secrets:
       TEAMS_WEBHOOK_URL:
         required: true
@@ -69,20 +54,7 @@ jobs:
                          { "title": "Pusher:", "value": "${{ github.actor }}" },
                          { "title": "Repository:", "value": "${{ github.repository }}" }
                        ]
-                     },
-                    {
-                      "type": "TextBlock",
-                      "text": "Latest commits",
-                      "weight": "Bolder",
-                      "spacing": "Medium"
-                    },
-                    { "type": "Container",
-                      "items": [
-                        { "type": "TextBlock", "text": "• ${{ steps.commits.outputs.commit_1_msg }} \n${{ steps.commits.outputs.commit_1_sha }}", "wrap": true, "isVisible": ${{ steps.commits.outputs.commit_1_sha != '' }} },
-                        { "type": "TextBlock", "text": "• ${{ steps.commits.outputs.commit_2_msg }} \n${{ steps.commits.outputs.commit_2_sha }}", "wrap": true, "isVisible": ${{ steps.commits.outputs.commit_2_sha != '' }} },
-                        { "type": "TextBlock", "text": "• ${{ steps.commits.outputs.commit_3_msg }} \n${{ steps.commits.outputs.commit_3_sha }}", "wrap": true, "isVisible": ${{ steps.commits.outputs.commit_3_sha != '' }} }
-                      ]
-                    },
+                     }
                   ],
                   "actions": [
                     { "type": "Action.OpenUrl", "title": "📂 View Compare", "url": "${{ inputs.compare_url || format('https://github.com/{0}/compare', github.repository) }}" }
@@ -111,13 +83,19 @@ jobs:
                       { "type": "Container", "style": "attention", "bleed": true,
                         "items": [
                           { "type": "TextBlock", "text": "🔀 Pull Request Opened", "weight": "Bolder", "size": "Large", "wrap": true },
-                          { "type": "TextBlock", "text": "**${{ inputs.pr_head }}** → **${{ inputs.pr_base }}**", "weight": "Bolder", "wrap": true }
+                          { "type": "TextBlock", "text": "**${{ github.event.pull_request.head.ref }}** → **${{ github.event.pull_request.base.ref }}**", "weight": "Bolder", "wrap": true }
                         ]
                       },
-                      { "type": "TextBlock", "text": "“${{ inputs.pr_title }}” (#${{ inputs.pr_number }})", "size": "Medium", "weight": "Bolder", "wrap": true }
+                      { "type": "TextBlock", "text": "“${{ github.event.pull_request.title }}”", "size": "Medium", "weight": "Bolder", "wrap": true },
+                      { "type": "FactSet", "facts": [
+                          { "title": "Author", "value": "${{  github.event.pull_request.user.login }}" },
+                          { "title": "Repository", "value": "${{ github.repository }}" },
+                          { "title": "PR #", "value": "#${{ github.event.pull_request.number }}" }
+                        ]
+                      }
                     ],
                     "actions": [
-                      { "type": "Action.OpenUrl", "title": "🔎 View Pull Request", "url": "https://github.com/${{ github.repository }}/pull/${{ inputs.pr_number }}" }
+                      { "type": "Action.OpenUrl", "title": "🔎 View Pull Request", "url": "https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}" }
                     ]
                   }
                 }
