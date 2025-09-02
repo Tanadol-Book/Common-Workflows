@@ -1,0 +1,96 @@
+name: post-to-teams
+on:
+  workflow_call:
+    inputs:
+      cardType:
+        description: "push | pr"
+        required: true
+        type: string
+      pr_number:
+        required: false
+        type: string
+      pr_title:
+        required: false
+        type: string
+      pr_head:
+        required: false
+        type: string
+      pr_base:
+        required: false
+        type: string
+      compare_url:
+        required: false
+        type: string
+    secrets:
+      TEAMS_WEBHOOK_URL:
+        required: true
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build Adaptive Card JSON
+        id: card
+        run: |
+          if [ "${{ inputs.cardType }}" = "push" ]; then
+            cat > card.json << 'JSON'
+            {
+              "type": "message",
+              "attachments": [
+                {
+                  "contentType": "application/vnd.microsoft.card.adaptive",
+                  "content": {
+                    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                    "type": "AdaptiveCard",
+                    "version": "1.5",
+                    "body": [
+                      { "type": "Container", "style": "good", "bleed": true,
+                        "items": [
+                          { "type": "TextBlock", "text": "⬆️ New Push to **${{ github.ref_name }}**", "weight": "Bolder", "size": "Large", "wrap": true },
+                          { "type": "TextBlock", "text": "Repository: **${{ github.repository }}**", "isSubtle": true, "wrap": true }
+                        ]
+                      }
+                    ],
+                    "actions": [
+                      { "type": "Action.OpenUrl", "title": "📂 View Compare", "url": "${{ inputs.compare_url || format('https://github.com/{0}/compare', github.repository) }}" }
+                    ]
+                  }
+                }
+              ]
+            }
+            JSON
+          else
+            cat > card.json << 'JSON'
+            {
+              "type": "message",
+              "attachments": [
+                {
+                  "contentType": "application/vnd.microsoft.card.adaptive",
+                  "content": {
+                    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                    "type": "AdaptiveCard",
+                    "version": "1.5",
+                    "body": [
+                      { "type": "Container", "style": "attention  ", "bleed": true,
+                        "items": [
+                          { "type": "TextBlock", "text": "🔀 Pull Request Opened", "weight": "Bolder", "size": "Large", "wrap": true },
+                          { "type": "TextBlock", "text": "**${{ inputs.pr_head }}** → **${{ inputs.pr_base }}**", "weight": "Bolder", "wrap": true }
+                        ]
+                      },
+                      { "type": "TextBlock", "text": "“${{ inputs.pr_title }}” (#${{ inputs.pr_number }})", "size": "Medium", "weight": "Bolder", "wrap": true }
+                    ],
+                    "actions": [
+                      { "type": "Action.OpenUrl", "title": "🔎 View Pull Request", "url": "https://github.com/${{ github.repository }}/pull/${{ inputs.pr_number }}" },
+                    ]
+                  }
+                }
+              ]
+            }
+            JSON
+          fi
+
+      - name: Post to Teams
+        run: |
+          curl -sS -H "Content-Type: application/json" \
+            -d @card.json \
+            "${{ secrets.TEAMS_WEBHOOK_URL }}"
