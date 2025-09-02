@@ -14,21 +14,6 @@ jobs:
   send:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Get last 3 commit messages
-        id: commits
-        run: |
-          git fetch --depth=5
-          COMMITS=$(git log -3 --pretty=format:"%h|||%s")
-          i=1
-          for COMMIT in $COMMITS; do
-            SHA=$(echo "$COMMIT" | cut -d '|' -f 1)
-            MSG=$(echo "$COMMIT" | cut -d '|' -f 3)
-            echo "commit_${i}_sha=$SHA" >> $GITHUB_OUTPUT
-            echo "commit_${i}_msg=$MSG" >> $GITHUB_OUTPUT
-            i=$((i+1))
-          done
-
       - name: Build Adaptive Card JSON (push)
         if: ${{ inputs.cardType == 'push' }}
         shell: bash
@@ -51,8 +36,9 @@ jobs:
                     },
                     { "type": "FactSet",
                        "facts": [
+                         { "title": "Repository:", "value": "${{ github.repository }}" },
+                         { "title": "Commit Message:", "value": "${{ github.event.head_commit.message }}" },
                          { "title": "Pusher:", "value": "${{ github.actor }}" },
-                         { "title": "Repository:", "value": "${{ github.repository }}" }
                        ]
                      }
                   ],
@@ -88,9 +74,10 @@ jobs:
                       },
                       { "type": "TextBlock", "text": "“${{ github.event.pull_request.title }}”", "size": "Medium", "weight": "Bolder", "wrap": true },
                       { "type": "FactSet", "facts": [
-                          { "title": "Author", "value": "${{  github.event.pull_request.user.login }}" },
                           { "title": "Repository", "value": "${{ github.repository }}" },
-                          { "title": "PR #", "value": "#${{ github.event.pull_request.number }}" }
+                          { "title": "PR #", "value": "#${{ github.event.pull_request.number }}" },
+                          { "title": "Commit Message:", "value": "${{ github.event.head_commit.message }}" },
+                          { "title": "Author", "value": "${{  github.event.pull_request.user.login }}" }
                         ]
                       }
                     ],
