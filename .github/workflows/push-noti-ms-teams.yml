@@ -1,4 +1,4 @@
-name: push-noti-ms-teams
+name: post-to-teams
 on:
   workflow_call:
     inputs:
@@ -71,7 +71,7 @@ jobs:
                     "type": "AdaptiveCard",
                     "version": "1.5",
                     "body": [
-                      { "type": "Container", "style": "attention  ", "bleed": true,
+                      { "type": "Container", "style": "attention", "bleed": true,
                         "items": [
                           { "type": "TextBlock", "text": "🔀 Pull Request Opened", "weight": "Bolder", "size": "Large", "wrap": true },
                           { "type": "TextBlock", "text": "**${{ inputs.pr_head }}** → **${{ inputs.pr_base }}**", "weight": "Bolder", "wrap": true }
@@ -80,7 +80,7 @@ jobs:
                       { "type": "TextBlock", "text": "“${{ inputs.pr_title }}” (#${{ inputs.pr_number }})", "size": "Medium", "weight": "Bolder", "wrap": true }
                     ],
                     "actions": [
-                      { "type": "Action.OpenUrl", "title": "🔎 View Pull Request", "url": "https://github.com/${{ github.repository }}/pull/${{ inputs.pr_number }}" },
+                      { "type": "Action.OpenUrl", "title": "🔎 View Pull Request", "url": "https://github.com/${{ github.repository }}/pull/${{ inputs.pr_number }}" }
                     ]
                   }
                 }
