@@ -46,10 +46,16 @@ jobs:
                   "body": [
                     { "type": "Container", "style": "good", "bleed": true,
                       "items": [
-                        { "type": "TextBlock", "text": "⬆️ New Push to **${{ github.ref_name }}**", "weight": "Bolder", "size": "Large", "wrap": true },
-                        { "type": "TextBlock", "text": "Repository: **${{ github.repository }}**", "isSubtle": true, "wrap": true }
+                        { "type": "TextBlock", "text": "⬆️ New Push to **${{ github.ref_name }}**", "weight": "Bolder", "size": "Large", "wrap": true }
                       ]
-                    }
+                    },
+                    { "type": "FactSet",
+                       "facts": [
+                         { "title": "Pusher:", "value": "${{ github.actor }}" },
+                         { "title": "Repository:", "value": "${{ github.repository }}" },
+                         { "title": "Ref:", "value": "**${{ github.ref }}**" }
+                       ]
+                     }
                   ],
                   "actions": [
                     { "type": "Action.OpenUrl", "title": "📂 View Compare", "url": "${{ inputs.compare_url || format('https://github.com/{0}/compare', github.repository) }}" }
