@@ -1,11 +1,6 @@
 name: post-to-teams
 on:
   workflow_call:
-    inputs:
-      cardType:
-        description: "push | pr"
-        required: true
-        type: string
     secrets:
       TEAMS_WEBHOOK_URL:
         required: true
@@ -15,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Build Adaptive Card JSON (push)
-        if: ${{ inputs.cardType == 'push' }}
+        if: ${{ github.event_name == 'push' }}
         shell: bash
         run: |
           cat > card.json << 'JSON'
@@ -52,7 +47,7 @@ jobs:
             JSON
             
       - name: Build Adaptive Card JSON (push)
-        if: ${{ inputs.cardType != 'push' }}
+        if: ${{ github.event_name == 'pull_request' }}
         shell: bash
         run: |
           cat > card.json << 'JSON'
@@ -76,7 +71,7 @@ jobs:
                       { "type": "FactSet", "facts": [
                           { "title": "Repository", "value": "${{ github.repository }}" },
                           { "title": "PR #", "value": "#${{ github.event.pull_request.number }}" },
-                          { "title": "Commit Message:", "value": "${{ github.event.head_commit.message }}" },
+                          { "title": "PR Title:", "value":"“${{ github.event.pull_request.title }}”"},
                           { "title": "Author", "value": "${{  github.event.pull_request.user.login }}" }
                         ]
                       }
