@@ -1,4 +1,4 @@
-name: post-to-teams
+name: push-noti-ms-teams
 on:
   workflow_call:
     inputs:
